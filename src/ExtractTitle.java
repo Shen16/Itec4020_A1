@@ -44,7 +44,7 @@ public class ExtractTitle {
 //        element.getAttributes();                //returns a Map (table) of names/values
 
 
-        //Get all employees
+        //Get all PubmedArticle
         NodeList nList = document.getElementsByTagName("PubmedArticle");
         System.out.println("============================");
 
@@ -74,10 +74,11 @@ public class ExtractTitle {
         // Create listOfLists in Java
         List<List<String>> listOfLists_Of_id = new ArrayList<>();
 
-        for (int i = 0; i < titleArray.size(); i++) {
-//        for (int i = 0; i < 3; i++) {
+//        for (int i = 0; i < titleArray.size(); i++) {
+        for (int i = 100; i < 200; i++) {
             String query_title = java.net.URLEncoder.encode(titleArray.get(i), "UTF-8");
 //            System.out.println(java.net.URLEncoder.encode(titleArray.get(i), "UTF-8"));
+//            String query_title = java.net.URLEncoder.encode("Increased reactive oxygen species production down-regulates peroxisome proliferator-activated alpha pathway in C2C12 skeletal muscle cells.", "UTF-8");
 
 
             var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi";
@@ -113,14 +114,30 @@ public class ExtractTitle {
                         content.append(line);
                         content.append(System.lineSeparator());
                     }
-                    String xml = ""; //Populated XML String....
-
+//                    String xml = ""; //Populated XML String....
+//
                     DocumentBuilderFactory factory2 = DocumentBuilderFactory.newInstance();
                     DocumentBuilder builder2 = factory2.newDocumentBuilder();
+
                     Document document2 = builder2.parse(new InputSource(new StringReader(content.toString())));
 
-                    Element rootElement2 = document2.getDocumentElement();
-                    System.out.println(rootElement2.getNodeName());
+
+
+
+//                    DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//                    InputSource src = new InputSource();
+//                    src.setCharacterStream(new StringReader(content.toString()));
+//
+//                    Document document2 = b.parse(src);
+
+
+
+
+                    //Normalize the XML Structure; It's just too important !!
+                    document2.getDocumentElement().normalize();
+
+                    Element root2 = document2.getDocumentElement();
+                    System.out.println(root2.getNodeName());
 
 
 
@@ -136,35 +153,39 @@ public class ExtractTitle {
                         NodeList nList2 = document2.getElementsByTagName("IdList");
                         System.out.println("============================");
 
-                        for (int temp = 0; temp < nList2.getLength(); temp++) {
-                            Node node2 = nList2.item(temp);
+                        for (int j = 0; j < nList2.getLength(); j++) {
+                            System.out.println(nList2);
+                            System.out.println(nList2.getLength());
+
+                            Node node = nList2.item(j);
                             System.out.println("");    //Just a separator
-                            if (node2.getNodeType() == Node.ELEMENT_NODE) {
+
+                            if (node.getNodeType() == Node.ELEMENT_NODE) {
                                 //Print each employee's detail
-                                Element eElement2 = (Element) node2;
+                                Element eElement = (Element) node;
                                 //                System.out.println("Employee id : " + eElement.getAttribute("id"));
 
 
-                                pm_id = eElement2.getElementsByTagName("Id").item(0).getTextContent();
-                                System.out.println("PMID " + temp + ": " + eElement2.getElementsByTagName("Id").item(0).getTextContent());
+                                pm_id = eElement.getElementsByTagName("Id").item(0).getTextContent();
+                                System.out.println("PMID " + j + ": " + eElement.getElementsByTagName("Id").item(0).getTextContent());
                                 //                System.out.println("Last Name : " + eElement.getElementsByTagName("lastName").item(0).getTextContent());
                                 //                System.out.println("Location : " + eElement.getElementsByTagName("location").item(0).getTextContent());
 
 
-//                                //Store titles in an array
-//                                pmid_Array.add(pm_id);
-//                                System.out.println(pmid_Array);
-//                                listOfLists_Of_id.add(pmid_Array);
+                                //Store titles in an array
+                                pmid_Array.add(pm_id);
+                                System.out.println(pmid_Array);
+
                             }
                         }
                     }
                     catch(NullPointerException e){
                         System.out.print("NullPointerException caught");
                         pm_id="NoPMID";
+                        pmid_Array.add(pm_id);
+                        System.out.println(pmid_Array);
                     }
-                    //Store titles in an array
-                    pmid_Array.add(pm_id);
-                    System.out.println(pmid_Array);
+                    //Store all ids in an array
                     listOfLists_Of_id.add(pmid_Array);
 
 
@@ -198,3 +219,5 @@ public class ExtractTitle {
 
 
 } //ends class
+
+
