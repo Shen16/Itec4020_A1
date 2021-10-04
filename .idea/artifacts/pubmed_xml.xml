@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact name="pubmed.xml">
+    <output-path>$PROJECT_DIR$/out/artifacts/pubmed_xml</output-path>
+    <root id="root" />
+  </artifact>
+</component>
